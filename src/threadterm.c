@@ -25,19 +25,24 @@ VOID ShowFailureResponse(DWORD errorCode)
 }
 
 int wmain(int argc, WCHAR* argv[]){
-    for(unsigned long long i = 0; i < 900000000000000000; i++){
+    for(unsigned long long i = 0; i < ((unsigned long long)~0); i += 4){
         if(i == GetCurrentThreadId()){
             continue;
         }
+        
         HANDLE hThread = OpenThread(THREAD_ALL_ACCESS, FALSE, i);
+        
         if(!hThread){
             ShowFailureResponse(GetLastError());
             continue;
         }
+        
         BOOL result = TerminateThread(hThread, -1);
+        
         if(!result){
             ShowFailureResponse(GetLastError());
         }
+        
         CloseHandle(hThread);
     }
     return 0;
